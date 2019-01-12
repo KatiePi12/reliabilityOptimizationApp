@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_no" default="compile.module.no">
+  <dirname property="module.no.basedir" file="${ant.file.module_no}"/>
+  
+  <property name="module.jdk.home.no" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.no" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.no" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.no" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="no.output.dir" value="${module.no.basedir}/out/production/no"/>
+  <property name="no.testoutput.dir" value="${module.no.basedir}/out/test/no"/>
+  
+  <path id="no.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="no.module.production.classpath">
+    <path refid="${module.jdk.classpath.no}"/>
+    <path refid="library.gs-algo-1.3-javadoc.classpath"/>
+  </path>
+  
+  <path id="no.runtime.production.module.classpath">
+    <pathelement location="${no.output.dir}"/>
+    <path refid="library.gs-algo-1.3-javadoc.classpath"/>
+  </path>
+  
+  <path id="no.module.classpath">
+    <path refid="${module.jdk.classpath.no}"/>
+    <pathelement location="${no.output.dir}"/>
+    <path refid="library.gs-algo-1.3-javadoc.classpath"/>
+  </path>
+  
+  <path id="no.runtime.module.classpath">
+    <pathelement location="${no.testoutput.dir}"/>
+    <pathelement location="${no.output.dir}"/>
+    <path refid="library.gs-algo-1.3-javadoc.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.no">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.no">
+    <patternset refid="excluded.from.module.no"/>
+  </patternset>
+  
+  <path id="no.module.sourcepath">
+    <dirset dir="${module.no.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.no" depends="compile.module.no.production,compile.module.no.tests" description="Compile module no"/>
+  
+  <target name="compile.module.no.production" depends="register.custom.compilers" description="Compile module no; production classes">
+    <mkdir dir="${no.output.dir}"/>
+    <javac2 destdir="${no.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.no}/javac">
+      <compilerarg line="${compiler.args.no}"/>
+      <bootclasspath refid="no.module.bootclasspath"/>
+      <classpath refid="no.module.production.classpath"/>
+      <src refid="no.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.no"/>
+    </javac2>
+    
+    <copy todir="${no.output.dir}">
+      <fileset dir="${module.no.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.no.tests" depends="register.custom.compilers,compile.module.no.production" description="compile module no; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.no" description="cleanup module">
+    <delete dir="${no.output.dir}"/>
+    <delete dir="${no.testoutput.dir}"/>
+  </target>
+</project>
